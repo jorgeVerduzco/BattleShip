@@ -20,11 +20,12 @@ import java.awt.BorderLayout;
 import java.awt.GridLayout;
 
 public class BattleshipView extends JFrame{
-    private JButton button[][];
+    public JButton button[][];
     private JLabel label = new JLabel("");
-    private JButton button2[][];
+    public JButton button2[][];
     private JFrame frame = new JFrame();
-    private JPanel panel1 = new JPanel();
+    private ImageIcon image = new ImageIcon("./canvas.png");
+    private MyPanel panel1 = new MyPanel(image);
     private JPanel panel2 = new JPanel();
 
     public BattleshipView()
