@@ -1,4 +1,4 @@
-package Game;
+package GameTest;
 
 
 import javax.imageio.ImageIO;
@@ -20,7 +20,17 @@ public class BattleshipController implements ActionListener{
 	public BattleshipController(BattleshipModel model, BattleshipView view) {
 		this.model = model;
 		this.view = view;
+		this.model.placeRandom();
 		buttonInitializer();
+	}
+
+	public void buttonInitializer() {
+		for(int row = 0; row < view.button.length; row++) {
+			for(int col = 0; col < view.button[row].length; col++) {
+				view.button[row][col].addActionListener(this);
+				view.button2[row][col].addActionListener(this);
+			}
+		}
 	}
 	//public BattleshipModel model = new BattleshipModel();
 	//public BattleshipView view = new BattleshipView();
@@ -30,18 +40,6 @@ public class BattleshipController implements ActionListener{
 		//this.view = view;
 	//}
 
-	public void buttonInitializer()
-    {
-        for(int row = 0; row < 7; row++)
-        {
-            for(int col = 0; col < 8; col++)
-            {
-                view.button[row][col].addActionListener(this);
-				view.button2[row][col].addActionListener(this);
-            }
-        }
-    }
-	
 	class MyPanel extends JPanel{
 	ImageIcon image;
 	Point imageUpperLeft, prevPoint;
@@ -93,11 +91,46 @@ class MyFrame extends JFrame {
 		this.setVisible(true);
 	}
 }
-
 @Override
 public void actionPerformed(ActionEvent e) {
 	JButton buttonClicked = (JButton)e.getSource();
-        buttonClicked.setText(String.valueOf("."));
+	int[] position = view.buttonPosition(buttonClicked);
+	int row = position[0];
+	int col = position[1];
+
+	if(model.isSquareOpen(row, col)) {
+		model.playTurn(row, col);
+		updateButtonBasedOnModel(buttonClicked, row, col);
+	
+		if(model.checkWin()) {
+			JOptionPane.showMessageDialog(view, "Game over, you've won");
+		}
+	}
+	else if((!model.isSquareOpen(row, col)) && (model.getBoardSquareStatus(row, col) != 'm'))
+	{
+		model.playTurn(row, col);
+		updateButtonBasedOnModel(buttonClicked, row, col);
+		if(model.checkWin()) {
+			JOptionPane.showMessageDialog(view, "Game over, you've won");
+		}
+	}
+}
+private void updateButtonBasedOnModel(JButton button, int row, int col) {
+	char status = model.getBoardSquareStatus(row, col);
+	switch(status) {
+		case 'm' :
+		button.setBackground(Color.WHITE);
+		button.setText("Miss");
+		break;
+		case 'H' :
+		button.setBackground(Color.RED);
+		button.setText("Hit");
+		break;
+		default :
+		button.setText("error");
+		break;
+	}
 }
 
 }
+

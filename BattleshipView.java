@@ -1,4 +1,4 @@
-package Game;
+package GameTest;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -7,35 +7,36 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import org.w3c.dom.events.MouseEvent;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseMotionAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.awt.BorderLayout;
-import java.awt.GridLayout;
 
 public class BattleshipView extends JFrame{
     public JButton button[][];
-    private JLabel label = new JLabel("");
+    private JLabel label[][];
     public JButton button2[][];
-    private JFrame frame = new JFrame();
-    private ImageIcon image = new ImageIcon("./canvas.png");
+    private ImageIcon image = new ImageIcon("C:\\Users\\jorge\\Desktop\\COSC330\\GameTest\\canvas.png");
+    private MyFrame frame = new MyFrame(image);
     private MyPanel panel1 = new MyPanel(image);
-    private JPanel panel2 = new JPanel();
+    private MyPanel panel2 = new MyPanel(image);
 
     public BattleshipView()
     {
         button = new JButton[7][8];
         button2 = new JButton[7][8];
+        label = new JLabel[7][8];
         panel1.setBorder(BorderFactory.createEmptyBorder(30,30,10,10));
         panel1.setLayout(new GridLayout(7,8));
         panel2.setBorder(BorderFactory.createEmptyBorder(30,30,10,10));
         panel2.setLayout(new GridLayout(7,8));
+        //label.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
         //initializes buttons and adds them to panel
         for(int row = 0; row < 7; row++)
@@ -44,13 +45,18 @@ public class BattleshipView extends JFrame{
             {
                 button[row][col] = new JButton();
                 button2[row][col] = new JButton();
+                label[row][col] = new JLabel("");
+                label[row][col].setBorder(BorderFactory.createLineBorder(Color.BLACK));
                 panel1.add(button[row][col]);
                 panel2.add(button2[row][col]);
+                //panel1.add(label);
+                //panel2.add(label[row][col]);
             }
         }
         frame.setTitle("Battleship");
-        frame.add(panel1,BorderLayout.SOUTH);
-        frame.add(panel2,BorderLayout.NORTH);
+        frame.add(panel1,BorderLayout.NORTH);
+        frame.add(panel2,BorderLayout.SOUTH);
+        //panel2.setVisible(false);
         frame.pack();
         frame.setVisible(true);
         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -76,17 +82,17 @@ public class BattleshipView extends JFrame{
 	}
 	private class ClickListener extends MouseAdapter{
 		public void mousePressed(MouseEvent event) {
-			//prevPoint = ((Object) event).getPoint();
+			prevPoint = (event).getPoint();
 		}	
 	}
     private class DragListener extends MouseMotionAdapter{
     	public void mouseDragged(MouseEvent event) {
-    		//Point currPoint = ((Object) event).getPoint();
-    		//int dx = (int) (currPoint.getX() - prevPoint.getX());
-    		//int dy = (int) (currPoint.getY() - prevPoint.getY());
+    		Point currPoint = (event).getPoint();
+    		int dx = (int) (currPoint.getX() - prevPoint.getX());
+    		int dy = (int) (currPoint.getY() - prevPoint.getY());
     		
-    		//imageUpperLeft.translate(dx, dy);
-    		//prevPoint = currPoint;
+    		imageUpperLeft.translate(dx, dy);
+    		prevPoint = currPoint;
     		repaint();  		
     	}
 	}
@@ -113,9 +119,9 @@ class MyFrame extends JFrame {
         {
             int position [] = new int[2];
 
-            for(int row = 0; row < 3; row++)
+            for(int row = 0; row < 7; row++)
             {
-                for(int col = 0; col < 3; col++)
+                for(int col = 0; col < 8; col++)
                 {
                     if(buttn==button[row][col])
                     {
