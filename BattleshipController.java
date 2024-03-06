@@ -73,8 +73,12 @@ public class BattleshipController implements ActionListener{
     		prevPoint = currPoint;
     		repaint();  		
     	}
+
 	}
+	
 }
+
+
 
 class MyFrame extends JFrame {
 
@@ -87,7 +91,7 @@ class MyFrame extends JFrame {
 		myPanel.setSize(imageIcon.getIconHeight(), imageIcon.getIconWidth());
 		this.add(myPanel);
 		this.setSize(imageIcon.getIconHeight()*2, imageIcon.getIconWidth()*2);
-		this.setBackground(Color.CYAN);
+		this.setBackground(Color.GRAY);
 		this.setVisible(true);
 	}
 }
@@ -133,4 +137,5 @@ private void updateButtonBasedOnModel(JButton button, int row, int col) {
 }
 
 }
+
 

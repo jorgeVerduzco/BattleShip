@@ -8,6 +8,28 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 
+import java.awt.event.ActionListener;
+import java.awt.event.MouseListener;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseMotionAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -19,36 +41,39 @@ import java.io.File;
 import java.io.IOException;
 
 public class BattleshipView extends JFrame{
-    public JButton button[][];
-    private JLabel label[][];
-    public JButton button2[][];
+    private final int GRIDSIZE = 10;
+    private JLabel userGrid[][];
+    public JLabel openentGrid[][];
+    private JButton randomButton;   
     private ImageIcon image = new ImageIcon("C:\\Users\\jorge\\Desktop\\COSC330\\GameTest\\canvas.png");
-    private MyFrame frame = new MyFrame(image);
-    private MyPanel panel1 = new MyPanel(image);
-    private MyPanel panel2 = new MyPanel(image);
+    private JFrame frame = new JFrame();
+    private JPanel panel1 = new JPanel();
+    private JPanel panel2 = new JPanel();
 
     public BattleshipView()
     {
-        button = new JButton[7][8];
-        button2 = new JButton[7][8];
-        label = new JLabel[7][8];
-        panel1.setBorder(BorderFactory.createEmptyBorder(30,30,10,10));
-        panel1.setLayout(new GridLayout(7,8));
-        panel2.setBorder(BorderFactory.createEmptyBorder(30,30,10,10));
-        panel2.setLayout(new GridLayout(7,8));
+        
+        randomButton = new JButton();
+        userGrid = new JLabel[GRIDSIZE][GRIDSIZE];
+        openentGrid = new JLabel[GRIDSIZE][GRIDSIZE];
+        frame.getContentPane().setPreferredSize(new Dimension(400,600));
+        panel1.setPreferredSize(new Dimension(100,200));
+        panel2.setPreferredSize(new Dimension(100,200));
+        panel1.setLayout(new GridLayout(10,10));
+        panel2.setLayout(new GridLayout(10,10));
         //label.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
         //initializes buttons and adds them to panel
-        for(int row = 0; row < 7; row++)
+        for(int row = 0; row < GRIDSIZE; row++)
         {
-            for(int col = 0; col < 8; col++)
+            for(int col = 0; col < GRIDSIZE; col++)
             {
-                button[row][col] = new JButton();
-                button2[row][col] = new JButton();
-                label[row][col] = new JLabel("");
-                label[row][col].setBorder(BorderFactory.createLineBorder(Color.BLACK));
-                panel1.add(button[row][col]);
-                panel2.add(button2[row][col]);
+                userGrid[row][col] = new JLabel();
+                openentGrid[row][col] = new JLabel();
+                userGrid[row][col].setBorder(BorderFactory.createLineBorder(Color.BLACK));
+                openentGrid[row][col].setBorder(BorderFactory.createLineBorder(Color.BLACK));
+                panel1.add(userGrid[row][col]);
+                panel2.add(openentGrid[row][col]);
                 //panel1.add(label);
                 //panel2.add(label[row][col]);
             }
@@ -115,7 +140,7 @@ class MyFrame extends JFrame {
 }
 
     //function will return row and column of button clicked
-    public int[] buttonPosition(JButton buttn)
+    public int[] buttonPosition(JLabel label)
         {
             int position [] = new int[2];
 
@@ -123,7 +148,7 @@ class MyFrame extends JFrame {
             {
                 for(int col = 0; col < 8; col++)
                 {
-                    if(buttn==button[row][col])
+                    if(label==openentGrid[row][col])
                     {
                         position[0] = row;
                         position[1] = col;
@@ -133,4 +158,3 @@ class MyFrame extends JFrame {
             return position;
         }
 }
-
