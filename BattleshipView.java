@@ -162,9 +162,9 @@ class MyFrame extends JFrame {
         {
             int position [] = new int[2];
 
-            for(int row = 0; row < 7; row++)
+            for(int row = 0; row < GRIDSIZE; row++)
             {
-                for(int col = 0; col < 8; col++)
+                for(int col = 0; col < GRIDSIZE; col++)
                 {
                     if(button==openentGrid[row][col])
                     {
