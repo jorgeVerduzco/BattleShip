@@ -20,15 +20,15 @@ public class BattleshipController implements ActionListener{
 	public BattleshipController(BattleshipModel model, BattleshipView view) {
 		this.model = model;
 		this.view = view;
-		this.model.placeRandom();
+		//this.model.placeRandom();
 		buttonInitializer();
 	}
 
 	public void buttonInitializer() {
-		for(int row = 0; row < view.button.length; row++) {
-			for(int col = 0; col < view.button[row].length; col++) {
-				view.button[row][col].addActionListener(this);
-				view.button2[row][col].addActionListener(this);
+		for(int row = 0; row < view.openentGrid.length; row++) {
+			for(int col = 0; col < view.openentGrid[row].length; col++) {
+				//view.userGrid[row][col].addActionListener(this);
+				view.openentGrid[row][col].addActionListener(this);
 			}
 		}
 	}
@@ -101,39 +101,36 @@ public void actionPerformed(ActionEvent e) {
 	int[] position = view.buttonPosition(buttonClicked);
 	int row = position[0];
 	int col = position[1];
+	boolean hit = model.cellUsed(row, col);
 
-	if(model.isSquareOpen(row, col)) {
-		model.playTurn(row, col);
-		updateButtonBasedOnModel(buttonClicked, row, col);
+	if(hit == true) {
+		model.markOpponentBoard(row, col, hit);
+		updateButtonBasedOnModel(buttonClicked, row, col,hit);
 	
-		if(model.checkWin()) {
+		if(model.isGameOver()) {
 			JOptionPane.showMessageDialog(view, "Game over, you've won");
 		}
 	}
-	else if((!model.isSquareOpen(row, col)) && (model.getBoardSquareStatus(row, col) != 'm'))
+	else if(hit == false)
 	{
-		model.playTurn(row, col);
-		updateButtonBasedOnModel(buttonClicked, row, col);
-		if(model.checkWin()) {
-			JOptionPane.showMessageDialog(view, "Game over, you've won");
-		}
+		model.markOpponentBoard(row, col, hit);
+		updateButtonBasedOnModel(buttonClicked, row, col, hit);
+	
+		//if(model.checkWin()) {
+		//	JOptionPane.showMessageDialog(view, "Game over, you've won");
+		//}
 	}
 }
-private void updateButtonBasedOnModel(JButton button, int row, int col) {
-	char status = model.getBoardSquareStatus(row, col);
-	switch(status) {
-		case 'm' :
-		button.setBackground(Color.WHITE);
-		button.setText("Miss");
-		break;
-		case 'H' :
+private void updateButtonBasedOnModel(JButton button, int row, int col,boolean hit) 
+{
+	if(hit == true)
+	{
 		button.setBackground(Color.RED);
-		button.setText("Hit");
-		break;
-		default :
-		button.setText("error");
-		break;
 	}
+	else{
+		button.setBackground(Color.WHITE);
+	}
+	
 }
 
 }

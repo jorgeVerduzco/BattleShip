@@ -42,23 +42,25 @@ import java.io.IOException;
 
 public class BattleshipView extends JFrame{
     private final int GRIDSIZE = 10;
-    private JLabel userGrid[][];
-    public JLabel openentGrid[][];
+    public JLabel userGrid[][];
+    public JButton openentGrid[][];
     private JButton randomButton;   
     private ImageIcon image = new ImageIcon("C:\\Users\\jorge\\Desktop\\COSC330\\GameTest\\canvas.png");
     private JFrame frame = new JFrame();
     private JPanel panel1 = new JPanel();
     private JPanel panel2 = new JPanel();
+    private JPanel panel3 = new JPanel();
 
     public BattleshipView()
     {
         
         randomButton = new JButton();
         userGrid = new JLabel[GRIDSIZE][GRIDSIZE];
-        openentGrid = new JLabel[GRIDSIZE][GRIDSIZE];
+        openentGrid = new JButton[GRIDSIZE][GRIDSIZE];
         frame.getContentPane().setPreferredSize(new Dimension(400,600));
-        panel1.setPreferredSize(new Dimension(100,200));
-        panel2.setPreferredSize(new Dimension(100,200));
+        panel1.setPreferredSize(new Dimension(100,250));
+        panel2.setPreferredSize(new Dimension(100,250));
+        panel3.setPreferredSize(new Dimension(100,100));
         panel1.setLayout(new GridLayout(10,10));
         panel2.setLayout(new GridLayout(10,10));
         //label.setBorder(BorderFactory.createLineBorder(Color.BLACK));
@@ -69,7 +71,7 @@ public class BattleshipView extends JFrame{
             for(int col = 0; col < GRIDSIZE; col++)
             {
                 userGrid[row][col] = new JLabel();
-                openentGrid[row][col] = new JLabel();
+                openentGrid[row][col] = new JButton();
                 userGrid[row][col].setBorder(BorderFactory.createLineBorder(Color.BLACK));
                 openentGrid[row][col].setBorder(BorderFactory.createLineBorder(Color.BLACK));
                 panel1.add(userGrid[row][col]);
@@ -79,8 +81,9 @@ public class BattleshipView extends JFrame{
             }
         }
         frame.setTitle("Battleship");
-        frame.add(panel1,BorderLayout.NORTH);
-        frame.add(panel2,BorderLayout.SOUTH);
+        frame.add(panel1,BorderLayout.SOUTH);
+        frame.add(panel2,BorderLayout.NORTH);
+        frame.add(panel3,BorderLayout.CENTER);
         //panel2.setVisible(false);
         frame.pack();
         frame.setVisible(true);
@@ -138,9 +141,24 @@ class MyFrame extends JFrame {
 		this.setVisible(true);
 	}
 }
+    public void updateButtonHit(int row,int col, boolean hit)
+    {
+        if(hit == true)
+        {
+            openentGrid[row][col].setBackground(Color.RED);
+        }
+
+        else
+        {
+            openentGrid[row][col].setBackground(Color.WHITE);
+        }
+
+    }
+    
+
 
     //function will return row and column of button clicked
-    public int[] buttonPosition(JLabel label)
+    public int[] buttonPosition(JButton button)
         {
             int position [] = new int[2];
 
@@ -148,7 +166,7 @@ class MyFrame extends JFrame {
             {
                 for(int col = 0; col < 8; col++)
                 {
-                    if(label==openentGrid[row][col])
+                    if(button==openentGrid[row][col])
                     {
                         position[0] = row;
                         position[1] = col;
