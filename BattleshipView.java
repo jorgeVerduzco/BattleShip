@@ -20,30 +20,14 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
+import java.util.Vector;
 
 
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseMotionAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 
 public class BattleshipView extends JFrame{
     private final int GRIDSIZE = 10;
     public JLabel userGrid[][];
-    public JButton openentGrid[][];
+    public JButton opponentGrid[][];
     private JButton randomButton;   
     private ImageIcon image = new ImageIcon("C:\\Users\\jorge\\Desktop\\COSC330\\GameTest\\canvas.png");
     private JFrame frame = new JFrame();
@@ -56,7 +40,7 @@ public class BattleshipView extends JFrame{
         
         randomButton = new JButton();
         userGrid = new JLabel[GRIDSIZE][GRIDSIZE];
-        openentGrid = new JButton[GRIDSIZE][GRIDSIZE];
+        opponentGrid = new JButton[GRIDSIZE][GRIDSIZE];
         frame.getContentPane().setPreferredSize(new Dimension(400,600));
         panel1.setPreferredSize(new Dimension(100,250));
         panel2.setPreferredSize(new Dimension(100,250));
@@ -71,11 +55,11 @@ public class BattleshipView extends JFrame{
             for(int col = 0; col < GRIDSIZE; col++)
             {
                 userGrid[row][col] = new JLabel();
-                openentGrid[row][col] = new JButton();
+                opponentGrid[row][col] = new JButton();
                 userGrid[row][col].setBorder(BorderFactory.createLineBorder(Color.BLACK));
-                openentGrid[row][col].setBorder(BorderFactory.createLineBorder(Color.BLACK));
+                opponentGrid[row][col].setBorder(BorderFactory.createLineBorder(Color.BLACK));
                 panel1.add(userGrid[row][col]);
-                panel2.add(openentGrid[row][col]);
+                panel2.add(opponentGrid[row][col]);
                 //panel1.add(label);
                 //panel2.add(label[row][col]);
             }
@@ -91,11 +75,12 @@ public class BattleshipView extends JFrame{
     }
 
     class MyPanel extends JPanel{
-	ImageIcon image;
+	Vector<ImageIcon> images;
 	Point imageUpperLeft, prevPoint;
 	
-	MyPanel(ImageIcon imageIcon){
-		image = imageIcon;
+	MyPanel(){
+		images = new Vector<>();
+        images.add(new ImageIcon("C:\\Users\\jorge\\Desktop\\COSC330\\GameTest\\canvas.png")); //new Point(100, 100)));
 		imageUpperLeft = new Point(100,100);
 		prevPoint = imageUpperLeft;
 		ClickListener clickListener = new ClickListener();
@@ -132,7 +117,7 @@ class MyFrame extends JFrame {
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setSize(800,800);
 		this.setLocationRelativeTo(null);
-		MyPanel myPanel = new MyPanel(imageIcon);
+		MyPanel myPanel = new MyPanel();
 		myPanel.setBorder(BorderFactory.createLineBorder(Color.black));
 		myPanel.setSize(imageIcon.getIconHeight(), imageIcon.getIconWidth());
 		this.add(myPanel);
@@ -145,12 +130,12 @@ class MyFrame extends JFrame {
     {
         if(hit == true)
         {
-            openentGrid[row][col].setBackground(Color.RED);
+            opponentGrid[row][col].setBackground(Color.RED);
         }
 
         else
         {
-            openentGrid[row][col].setBackground(Color.WHITE);
+            opponentGrid[row][col].setBackground(Color.WHITE);
         }
 
     }
@@ -166,7 +151,7 @@ class MyFrame extends JFrame {
             {
                 for(int col = 0; col < GRIDSIZE; col++)
                 {
-                    if(button==openentGrid[row][col])
+                    if(button==opponentGrid[row][col])
                     {
                         position[0] = row;
                         position[1] = col;

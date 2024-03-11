@@ -20,26 +20,17 @@ public class BattleshipController implements ActionListener{
 	public BattleshipController(BattleshipModel model, BattleshipView view) {
 		this.model = model;
 		this.view = view;
-		//this.model.placeRandom();
 		buttonInitializer();
 	}
 
 	public void buttonInitializer() {
-		for(int row = 0; row < view.openentGrid.length; row++) {
-			for(int col = 0; col < view.openentGrid[row].length; col++) {
-				//view.userGrid[row][col].addActionListener(this);
-				view.openentGrid[row][col].addActionListener(this);
+		for(int row = 0; row < view.opponentGrid.length; row++) {
+			for(int col = 0; col < view.opponentGrid[row].length; col++) {
+				view.opponentGrid[row][col].addActionListener(this);
 			}
 		}
 	}
-	//public BattleshipModel model = new BattleshipModel();
-	//public BattleshipView view = new BattleshipView();
-	//public BattleshipController(BattleshipModel model, BattleshipView view)
-	//{
-		//this.model = model;
-		//this.view = view;
-	//}
-
+	
 	class MyPanel extends JPanel{
 	ImageIcon image;
 	Point imageUpperLeft, prevPoint;
@@ -97,42 +88,65 @@ class MyFrame extends JFrame {
 }
 @Override
 public void actionPerformed(ActionEvent e) {
+	
 	JButton buttonClicked = (JButton)e.getSource();
 	int[] position = view.buttonPosition(buttonClicked);
 	int row = position[0];
 	int col = position[1];
-	boolean hit = model.cellUsed(row, col);
 
-	if(hit == true) {
-		model.markOpponentBoard(row, col, hit);
-		updateButtonBasedOnModel(buttonClicked, row, col,hit);
+	if(!model.cellUsed(row, col)) {
+		return;
+	} 
+
+	boolean hit = model.markOpponentBoard(row, col);
+
+	if(hit) {
+		Ship sunkShip = model.getRecentlySunkShip();
+		if(sunkShip != null) {
+			view.displayMessage(sunkShip.getName() + " has been sunk");
+		} else {
+			view.displayMessage("Hit!");
+		}
+	} else {
+		view.displayMessage("Miss!");
+	}
 	
-		if(model.isGameOver()) {
-			JOptionPane.showMessageDialog(view, "Game over, you've won");
+	updateViewFromModel();
+	updateOpponentViewFromModel();
+
+	if(model.isGameOver()) {
+		JOptionPane.showMessageDialog(view, "Game over, you've won");
+	}
+}
+ private void updateViewFromModel() {
+	char[][] userBoard = model.getUserBoard();
+	for(int row = 0; row < userBoard.length; row++) {
+		for(int col = 0; col < userBoard[row].length; col++) {
+			if(userBoard[row][col] == 'S') {
+				view.userGrid[row][col].setIcon(new ImageIcon("C:\\Users\\jorge\\Desktop\\COSC330\\GameTest\\canvas.png"));
+			} else if(userBoard[row][col] == 'H') {
+				view.userGrid[row][col].setBackground(Color.RED);
+			} else if(userBoard[row][col] == 'M') {
+				view.userGrid[row][col].setBackground(Color.WHITE);
+			} else {
+				view.userGrid[row][col].setBackground(Color.BLUE);
+			}
 		}
 	}
-	else if(hit == false)
-	{
-		model.markOpponentBoard(row, col, hit);
-		updateButtonBasedOnModel(buttonClicked, row, col, hit);
-	
-		//if(model.checkWin()) {
-		//	JOptionPane.showMessageDialog(view, "Game over, you've won");
-		//}
-	}
-}
-private void updateButtonBasedOnModel(JButton button, int row, int col,boolean hit) 
-{
-	if(hit == true)
-	{
-		button.setBackground(Color.RED);
-	}
-	else{
-		button.setBackground(Color.WHITE);
-	}
-	
-}
+ }
 
+ private void updateOpponentViewFromModel() {
+	char[][] opponentBoard = model.getOpponentBoard();
+	for(int row = 0; row < opponentBoard.length; row++) {
+		for(int col = 0; col < opponentBoard.length; col++) {
+			if(opponentBoard[row][col] == 'H') {
+				view.opponentGrid[row][col].setBackground(Color.RED);
+			} else if(opponentBoard[row][col] == 'M') {
+				view.opponentGrid[row][col].setBackground(Color.WHITE);
+			}
+}	
+}
+ }
 }
 
 
