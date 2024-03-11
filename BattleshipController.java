@@ -1,4 +1,4 @@
-package GameTest;
+//package GameTest;
 
 
 import javax.imageio.ImageIO;
@@ -98,18 +98,19 @@ public void actionPerformed(ActionEvent e) {
 		return;
 	} 
 
-	boolean hit = model.markOpponentBoard(row, col);
+	boolean hit = model.cellUsed(row, col);
+	model.markOpponentBoard(row, col, hit);
 
-	if(hit) {
-		Ship sunkShip = model.getRecentlySunkShip();
-		if(sunkShip != null) {
-			view.displayMessage(sunkShip.getName() + " has been sunk");
-		} else {
-			view.displayMessage("Hit!");
-		}
-	} else {
-		view.displayMessage("Miss!");
-	}
+	// if(hit) {
+	// 	Ship sunkShip = model.getRecentlySunkShip();
+	// 	if(sunkShip != null) {
+	// 		view.displayMessage(sunkShip.getName() + " has been sunk");
+	// 	} else {
+	// 		view.displayMessage("Hit!");
+	// 	}
+	// } else {
+	// 	view.displayMessage("Miss!");
+	// }
 	
 	updateViewFromModel();
 	updateOpponentViewFromModel();

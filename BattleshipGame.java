@@ -1,4 +1,4 @@
-package GameTest;
+//package GameTest;
 
 public class BattleshipGame {
 	public static void main(String[] args){

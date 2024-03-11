@@ -1,4 +1,4 @@
-package GameTest;
+//package GameTest;
 
 public class Ship {
     private String name;

@@ -1,4 +1,4 @@
-package Battleships;
+//package Battleships;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.JFrame;

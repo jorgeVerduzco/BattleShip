@@ -1,4 +1,4 @@
-package GameTest;
+//package GameTest;
 import java.awt.Point;
 import javax.swing.ImageIcon;
 public class DraggedShips {
