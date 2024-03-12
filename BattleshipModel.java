@@ -1,6 +1,7 @@
 //package GameTest;
 
 import java.util.Random;
+import java.awt.Image;
 import java.sql.ShardingKey;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,7 +12,7 @@ public class BattleshipModel {
     private char[][] opponentBoard;
     private final int size = 10;
     private List<Ship> playerShips;
-    private List<Ship> opponentShips;
+    public List<Ship> opponentShips;
     private Random random;
 
     public BattleshipModel() {
@@ -22,7 +23,7 @@ public class BattleshipModel {
         opponentShips = new ArrayList<>();
         initializeBoard(userBoard);
         initializeBoard(opponentBoard);
-        
+        initializeShips(opponentShips);
         randomizeShips();
         randomizeOpponentsShips();
 
@@ -43,10 +44,10 @@ public class BattleshipModel {
         }
         return true;
     }
-    public boolean placeShipManually(String shipType, int row, int col, boolean isHorizontal){
+    public boolean placeShipManually(String shipType, int row, int col, boolean isHorizontal, int cells){
         int shipSize = getShipSize(shipType);
         if(shipSize == -1) return false;
-        Ship newShip = new Ship(shipType, shipSize, row, col, isHorizontal);
+        Ship newShip = new Ship(shipType, shipSize, row, col, isHorizontal, cells);
         if(!isValidPlacement(newShip, userBoard)) {
             return false;
         }
@@ -69,20 +70,32 @@ public class BattleshipModel {
 
     private void initializeShips(List<Ship> ship)
     {
-        ship.add(new Ship(null, size, size, size, isGameOver()));
-        ship.add(new Ship(null, size, size, size, isGameOver()));
-        ship.add(new Ship(null, size, size, size, isGameOver()));
-        ship.add(new Ship(null, size, size, size, isGameOver()));
-        ship.add(new Ship(null, size, size, size, isGameOver()));
-        ship.set(0,new Ship("Carrier", 0, 0, 0, false));
-        ship.set(1,new Ship("Battleship", 0, 0, 0, false));
-        ship.set(2,new Ship("Cruise", 0, 0, 0, false));
-        ship.set(3,new Ship("Submarine", 0, 0, 0, false));
-        ship.set(4,new Ship("Destroyer", 0, 0, 0, false));
-        
-        
+        // ship.add(new Ship(null, size, size, size, isGameOver(),0));
+        // ship.add(new Ship(null, size, size, size, isGameOver(),0));
+        // ship.add(new Ship(null, size, size, size, isGameOver(),0));
+        // ship.add(new Ship(null, size, size, size, isGameOver(),0));
+        // ship.add(new Ship(null, size, size, size, isGameOver(),0));
+
+        // ship.set(0, ("Carrier", 5, 0, 0, false,5));
+        // ship.set(1,new Ship("Battleship", 4, 0, 0, false,4));
+        // ship.set(2,new Ship("Cruise", 3, 0, 0, false,3));
+        // ship.set(3,new Ship("Submarine", 3, 0, 0, false,3));
+        // ship.set(4,new Ship("Destroyer", 2, 0, 0, false,2));
+
+        ship.add(new Ship("Carrier", 5, 0, 0, false, 5));
+        ship.add(new Ship("Battleship", 4, 0, 0, false,4));
+        ship.add(new Ship("Cruise", 3, 0, 0, false,3));
+        ship.add(new Ship("Submarine", 3, 0, 0, false,3));
+        ship.add(new Ship("Destroyer", 2, 0, 0, false,2));
     }
+
     private void randomizeShips() {
+        String shipImageStrs[] = new String[5];
+        for (int i = 0; i < shipImageStrs.length; i++) {
+            if (i % 2 == 0) {
+                shipImageStrs[i] = "blueSquare_" + i + ".png";
+            }
+        }
         int [] shipSize = {5,4,3,3,2};
         String[] shipTypes = {"Carrier", "Battleship", "Cruise", "Submarine" , "Destroyer"};
 
@@ -92,7 +105,7 @@ public class BattleshipModel {
                     int row = random.nextInt(size-1);
                     int col = random.nextInt(size-1);
                     boolean isHorizontal = random.nextBoolean();
-                    Ship newShip = new Ship(shipTypes[i], shipSize[i], row, col, isHorizontal);
+                    Ship newShip = new Ship(shipTypes[i], shipSize[i], row, col, isHorizontal,shipSize[i]);
 
                     if(isValidPlacement(newShip, userBoard)) {
                         playerShips.add(newShip);
@@ -112,7 +125,7 @@ public class BattleshipModel {
                     int row = random.nextInt(size-1);
                     int col = random.nextInt(size-1);
                     boolean isHorizontal = random.nextBoolean();
-                    Ship newShip = new Ship(shipTypes[i], shipSize[i], row, col, isHorizontal);
+                    Ship newShip = new Ship(shipTypes[i], shipSize[i], row, col, isHorizontal,shipSize[i]);
 
                     if(isValidPlacement(newShip, opponentBoard)) {
                         opponentShips.add(newShip);
@@ -176,9 +189,53 @@ public class BattleshipModel {
         markBoard(opponentBoard, row, col, hit);
     }
     private void markBoard(char[][] board, int row, int col, boolean hit) {
-        if(row >= 0 && row < size && col >= 0 && col < size) {
-            board[row][col] = hit ? 'H' : 'M';
+        if (hit) {
+        for(int shipCount = 0; shipCount < 5; shipCount++){
+            for (int i = 0; i < 10; i++) {
+                for (int j = 0; j < 10; j++) {
+                    if (opponentShips.get(shipCount).startCoordinates[0] == i  && opponentShips.get(shipCount).startCoordinates[0] == j) {
+                        if(opponentShips.get(shipCount).isHorizontal()) {
+                            int shipSize = opponentShips.get(shipCount).getSize();
+                            int shipRow = i;
+                            int shipCol = j;
+                            while (shipSize != 0) {
+                                if (row == shipRow && col == shipCol) {
+                                    opponentShips.get(shipCount).markHit(row, col);
+                                }
+                                shipCol++;
+                                shipSize--;
+                            }
+                        } else {
+                            int shipSize = opponentShips.get(shipCount).getSize();
+                            int shipRow = i;
+                            int shipCol = j;
+                            while (shipSize != 0) {
+                                if (row == shipRow && col == shipCol) {
+                                    opponentShips.get(shipCount).markHit(row, col);
+                                }
+                                shipRow++;
+                                shipSize--;
+                            }
+                        }
+                        
+                        //opponentShips.get(shipCount).markHit(row, col);
+                    }
+                }
+            }
         }
+        }
+
+        // if(row >= 0 && row < size && col >= 0 && col < size) {
+        //     board[row][col] = hit ? 'H' : 'M';
+        //     for(int i = 0; i < 5; i++)
+        //     {
+        //         if(opponentShips.get(i).startCoordinates[0] == row && opponentShips.get(i).startCoordinates[0] == col)
+        //         {
+        //             opponentShips.get(i).markHit(row, col);
+        //         }
+        //     }
+            
+        // }
         
     }
     public char[][] getUserBoard() {
@@ -192,7 +249,15 @@ public class BattleshipModel {
     {
         if(opponentBoard[row][col] == 'S' || opponentBoard[row][col] == 'H')
             return true;
-
         return false;
     }
+
+   public Ship getRecentlySunkShip() {
+    for (Ship ship : opponentShips) {
+        if (ship.checkAndMarkSunk()) {
+            return ship; // Return the recently sunk ship
+        }
+    }
+    return null; // No new ships have been sunk since the last check
+}
 }

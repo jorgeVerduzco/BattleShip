@@ -8,9 +8,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 
-import java.awt.event.ActionListener;
-import java.awt.event.MouseListener;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -28,7 +25,7 @@ public class BattleshipView extends JFrame{
     private final int GRIDSIZE = 10;
     public JLabel userGrid[][];
     public JButton opponentGrid[][];
-    private JButton randomButton;   
+    public JButton randomButton;   
     private ImageIcon image = new ImageIcon("C:\\Users\\jorge\\Desktop\\COSC330\\GameTest\\canvas.png");
     private JFrame frame = new JFrame();
     private JPanel panel1 = new JPanel();
@@ -73,59 +70,12 @@ public class BattleshipView extends JFrame{
         frame.setVisible(true);
         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
+     public void displayMessage(String message) {
+        JOptionPane.showMessageDialog(this, message);
+    }
+    
 
-    class MyPanel extends JPanel{
-	Vector<ImageIcon> images;
-	Point imageUpperLeft, prevPoint;
-	
-	MyPanel(){
-		images = new Vector<>();
-        images.add(new ImageIcon("C:\\Users\\jorge\\Desktop\\COSC330\\GameTest\\canvas.png")); //new Point(100, 100)));
-		imageUpperLeft = new Point(100,100);
-		prevPoint = imageUpperLeft;
-		ClickListener clickListener = new ClickListener();
-		this.addMouseListener(clickListener);
-		DragListener dragListener = new DragListener();
-		this.addMouseMotionListener(dragListener);
-		
-	}
-	public void paintComponent(Graphics g) {
-		super.paintComponent(g);
-		image.paintIcon(this, g, (int) imageUpperLeft.getX(), (int) imageUpperLeft.getY());
-	}
-	private class ClickListener extends MouseAdapter{
-		public void mousePressed(MouseEvent event) {
-			prevPoint = (event).getPoint();
-		}	
-	}
-    private class DragListener extends MouseMotionAdapter{
-    	public void mouseDragged(MouseEvent event) {
-    		Point currPoint = (event).getPoint();
-    		int dx = (int) (currPoint.getX() - prevPoint.getX());
-    		int dy = (int) (currPoint.getY() - prevPoint.getY());
-    		
-    		imageUpperLeft.translate(dx, dy);
-    		prevPoint = currPoint;
-    		repaint();  		
-    	}
-	}
-}
-
-class MyFrame extends JFrame {
-
-	MyFrame(ImageIcon imageIcon){
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.setSize(800,800);
-		this.setLocationRelativeTo(null);
-		MyPanel myPanel = new MyPanel();
-		myPanel.setBorder(BorderFactory.createLineBorder(Color.black));
-		myPanel.setSize(imageIcon.getIconHeight(), imageIcon.getIconWidth());
-		this.add(myPanel);
-		this.setSize(imageIcon.getIconHeight()*2, imageIcon.getIconWidth()*2);
-		this.setBackground(Color.CYAN);
-		this.setVisible(true);
-	}
-}
+    
     public void updateButtonHit(int row,int col, boolean hit)
     {
         if(hit == true)
