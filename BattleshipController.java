@@ -1,4 +1,4 @@
-package GameTest;
+//package GameTest;
 
 
 import javax.imageio.ImageIO;
@@ -21,6 +21,8 @@ public class BattleshipController implements ActionListener{
 		this.model = model;
 		this.view = view;
 		buttonInitializer();
+		updateViewFromModel();
+		updateOpponentViewFromModel();
 	}
 
 	public void buttonInitializer() {
@@ -31,6 +33,8 @@ public class BattleshipController implements ActionListener{
 		}
 	}
 	
+
+
 	class MyPanel extends JPanel{
 	ImageIcon image;
 	Point imageUpperLeft, prevPoint;
@@ -85,6 +89,7 @@ class MyFrame extends JFrame {
 		this.setBackground(Color.GRAY);
 		this.setVisible(true);
 	}
+
 }
 @Override
 public void actionPerformed(ActionEvent e) {
@@ -94,30 +99,29 @@ public void actionPerformed(ActionEvent e) {
 	int row = position[0];
 	int col = position[1];
 
-	if(!model.cellUsed(row, col)) {
-		return;
-	} 
+ 		boolean hit = model.cellUsed(row, col);
+        model.markOpponentBoard(row, col, hit);
+        view.updateButtonHit(row, col, hit); // Update the view based on hit or miss
 
-	boolean hit = model.markOpponentBoard(row, col);
+        Ship recentlySunkShip = model.getRecentlySunkShip();
+        if (hit) {
+            if (recentlySunkShip != null) {
+                view.displayMessage(recentlySunkShip.getName() + " has been sunk!");
+            } else {
+                view.displayMessage("Hit!");
+            }
+        } else {
+            view.displayMessage("Miss!");
+        }
 
-	if(hit) {
-		Ship sunkShip = model.getRecentlySunkShip();
-		if(sunkShip != null) {
-			view.displayMessage(sunkShip.getName() + " has been sunk");
-		} else {
-			view.displayMessage("Hit!");
-		}
-	} else {
-		view.displayMessage("Miss!");
-	}
-	
-	updateViewFromModel();
-	updateOpponentViewFromModel();
+		 updateViewFromModel();
+        updateOpponentViewFromModel();
+        // Check if the game is over and display a message if so
+        if (model.areAllShipsSunk()) {
+            view.displayMessage("Game over!");
+        }
+    }
 
-	if(model.isGameOver()) {
-		JOptionPane.showMessageDialog(view, "Game over, you've won");
-	}
-}
  private void updateViewFromModel() {
 	char[][] userBoard = model.getUserBoard();
 	for(int row = 0; row < userBoard.length; row++) {
@@ -148,5 +152,3 @@ public void actionPerformed(ActionEvent e) {
 }
  }
 }
-
-

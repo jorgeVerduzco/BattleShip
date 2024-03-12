@@ -1,4 +1,4 @@
-package GameTest;
+//package GameTest;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -73,6 +73,10 @@ public class BattleshipView extends JFrame{
         frame.setVisible(true);
         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
+     public void displayMessage(String message) {
+        JOptionPane.showMessageDialog(this, message);
+    }
+    
 
     class MyPanel extends JPanel{
 	Vector<ImageIcon> images;
@@ -98,6 +102,8 @@ public class BattleshipView extends JFrame{
 			prevPoint = (event).getPoint();
 		}	
 	}
+
+   
     private class DragListener extends MouseMotionAdapter{
     	public void mouseDragged(MouseEvent event) {
     		Point currPoint = (event).getPoint();
