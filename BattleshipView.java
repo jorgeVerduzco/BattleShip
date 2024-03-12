@@ -1,4 +1,6 @@
-//package GameTest;
+package BattleshipTest;
+
+
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;

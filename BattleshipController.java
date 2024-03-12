@@ -1,5 +1,4 @@
-//package GameTest;
-
+package BattleshipTest;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -11,6 +10,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.List;
+import javax.swing.JButton;
 import java.io.IOException;
 
 public class BattleshipController implements ActionListener{
@@ -28,7 +29,8 @@ public class BattleshipController implements ActionListener{
 	public void buttonInitializer() {
 		for(int row = 0; row < view.opponentGrid.length; row++) {
 			for(int col = 0; col < view.opponentGrid[row].length; col++) {
-				view.opponentGrid[row][col].addActionListener(this);
+                JButton button = view.opponentGrid[row][col];
+                button.addActionListener(this);
 			}
 		}
 	}
@@ -99,45 +101,70 @@ public void actionPerformed(ActionEvent e) {
 	int row = position[0];
 	int col = position[1];
 
- 		boolean hit = model.cellUsed(row, col);
-        model.markOpponentBoard(row, col, hit);
-        view.updateButtonHit(row, col, hit); // Update the view based on hit or miss
+   char cellState = model.getOpponentBoard()[row][col];
+   if(cellState == ' ' || cellState == 'S') {
+    boolean hit = model.cellUsed(row, col);
 
-        Ship recentlySunkShip = model.getRecentlySunkShip();
-        if (hit) {
-            if (recentlySunkShip != null) {
-                view.displayMessage(recentlySunkShip.getName() + " has been sunk!");
-            } else {
-                view.displayMessage("Hit!");
-            }
-        } else {
-            view.displayMessage("Miss!");
-        }
-
-		 updateViewFromModel();
-        updateOpponentViewFromModel();
-        // Check if the game is over and display a message if so
-        if (model.areAllShipsSunk()) {
-            view.displayMessage("Game over!");
-        }
+    if(hit) {
+        view.displayMessage("Hit!");
+    } else {
+        view.displayMessage("Miss");
     }
 
- private void updateViewFromModel() {
-	char[][] userBoard = model.getUserBoard();
-	for(int row = 0; row < userBoard.length; row++) {
-		for(int col = 0; col < userBoard[row].length; col++) {
-			if(userBoard[row][col] == 'S') {
-				view.userGrid[row][col].setIcon(new ImageIcon("C:\\Users\\jorge\\Desktop\\COSC330\\GameTest\\canvas.png"));
-			} else if(userBoard[row][col] == 'H') {
-				view.userGrid[row][col].setBackground(Color.RED);
-			} else if(userBoard[row][col] == 'M') {
-				view.userGrid[row][col].setBackground(Color.WHITE);
-			} else {
-				view.userGrid[row][col].setBackground(Color.BLUE);
-			}
-		}
-	}
- }
+    List<Ship> sunkShips = model.getAndClearRecentlySunkShips();
+    for(Ship sunkShip : sunkShips) {
+        view.displayMessage(sunkShip.getName() + " has been sunk");
+    }
+    if(model.areAllShipsSunk()) {
+        view.displayMessage("Game over, you won");
+    }
+   }else {
+    view.displayMessage("Position already hit");
+   }
+
+   refreshGameBoard();
+}
+
+private void refreshGameBoard() {
+    for(int row = 0; row < model.getOpponentBoard().length; row++) {
+        for(int col = 0; col < model.getOpponentBoard()[row].length; col++) {
+            char cell = model.getOpponentBoard()[row][col];
+            JButton button = view.opponentGrid[row][col];
+            if(cell == 'H') {
+                button.setBackground(Color.RED);
+            }else if(cell == 'M') {
+                button.setBackground(Color.WHITE);
+            }
+        }
+    }
+}
+private void updateViewFromModel() {
+   char[][] opponentBoard = model.getOpponentBoard();
+   for(int row = 0; row < opponentBoard.length; row++) {
+    for(int col = 0; col < opponentBoard[row].length; col++) {
+        JButton cellButton = view.opponentGrid[row][col];
+        switch(opponentBoard[row][col]) {
+            case 'H' :
+            cellButton.setBackground(Color.RED);
+            break;
+            case 'M' :
+            cellButton.setBackground(Color.WHITE);
+            break;
+            case 'S' :
+            case ' ' :
+            default: 
+            cellButton.setBackground(Color.BLUE);
+            break;
+        }
+    }
+}
+    model.getAndClearRecentlySunkShips().forEach(sunkShip -> view.displayMessage(sunkShip.getName() + " has been sunk")
+    );
+    if(model.areAllShipsSunk()) {
+        view.displayMessage("All ships are sunk! You won!");
+    }
+   }
+ 
 
  private void updateOpponentViewFromModel() {
 	char[][] opponentBoard = model.getOpponentBoard();

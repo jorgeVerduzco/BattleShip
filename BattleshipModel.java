@@ -1,8 +1,7 @@
-//package GameTest;
+package BattleshipTest;
 
 import java.util.Random;
 import java.awt.Image;
-import java.sql.ShardingKey;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -10,17 +9,18 @@ import java.util.List;
 public class BattleshipModel {
     private char[][] userBoard;
     private char[][] opponentBoard;
+    private Ship[][] opponentShipPositions;
     private final int size = 10;
     private List<Ship> playerShips;
-    private List<Ship> opponentShips;
-    private Random random;
+    private List<Ship> opponentShips = new ArrayList<>();
+    private List<Ship> recentlySunkShips = new ArrayList<>();
+    private Random random = new Random();
 
     public BattleshipModel() {
-        this.random = new Random();
         userBoard = new char[size][size];
         opponentBoard = new char[size][size];
+        opponentShipPositions = new Ship[size][size];
         playerShips = new ArrayList<>();
-        opponentShips = new ArrayList<>();
         initializeBoard(userBoard);
         initializeBoard(opponentBoard);
         initializeShips(opponentShips);
@@ -28,6 +28,7 @@ public class BattleshipModel {
         randomizeOpponentsShips();
 
     }
+    
     private void initializeBoard(char[][] board) {
         for(int i = 0; i < size; i++) {
             for(int j = 0; j < size; j++) {
@@ -36,50 +37,64 @@ public class BattleshipModel {
         }
     }
 
-    public boolean areAllShipsSunk() {
-        for(Ship ship : opponentShips) {
-            if(!ship.isSunk()) {
-                return false;
+  public boolean cellUsed(int row, int col) {
+    Ship ship = opponentShipPositions[row][col];
+    if(ship != null) {
+        boolean hit = ship.markHit(row, col);
+        opponentBoard[row][col] = hit ? 'H' : 'M';
+        if(hit && ship.isSunk()) {
+            if(!recentlySunkShips.contains(ship)) {
+                recentlySunkShips.add(ship);
             }
         }
-        return true;
+        return hit;
+    } else {
+        opponentBoard[row][col] = 'M';
+        return false;
     }
-    public boolean placeShipManually(String shipType, int row, int col, boolean isHorizontal, int cells){
-        int shipSize = getShipSize(shipType);
-        if(shipSize == -1) return false;
-        Ship newShip = new Ship(shipType, shipSize, row, col, isHorizontal, cells);
-        if(!isValidPlacement(newShip, userBoard)) {
-            return false;
-        }
-        
-        playerShips.add(newShip);
-        markShipOnBoard(newShip, userBoard);
-        return true;
-    }
+  }
 
-    private int getShipSize(String shipType) {
-        switch (shipType) {
-            case "Carrier": return 5;
-            case "Battleship" : return 4;
-            case "Cruise": return 3;
-            case "Submarine": return 3;
-            case "Destroyer": return 2;
-            default: return -1; 
-                  }
+  public void checkForSunkShip(Ship ship) {
+    if(ship.isSunk()) {
+        if(!recentlySunkShips.contains(ship)) {
+            recentlySunkShips.add(ship);
+        }
     }
+  }
+  public Ship getRecentlySunkShip() {
+   if(!recentlySunkShips.isEmpty()) {
+    return recentlySunkShips.get(recentlySunkShips.size() - 1);
+   }
+   return null;
+}
+
+  public List<Ship> getAndClearRecentlySunkShips() {
+    List<Ship> sunkShips = new ArrayList<>(recentlySunkShips);
+    recentlySunkShips.clear();
+    return sunkShips;
+  }
+  public char[][] getOpponentBoard() {
+    return opponentBoard;
+  }
+  public Ship[][] getOpponentShipPosition() {
+    return opponentShipPositions;
+  }
+  public boolean areAllShipsSunk() {
+    return opponentShips.stream().allMatch(Ship :: isSunk);
+  }
 
     private void initializeShips(List<Ship> ship)
     {
-        ship.add(new Ship(null, size, size, size, isGameOver(),0));
-        ship.add(new Ship(null, size, size, size, isGameOver(),0));
-        ship.add(new Ship(null, size, size, size, isGameOver(),0));
-        ship.add(new Ship(null, size, size, size, isGameOver(),0));
-        ship.add(new Ship(null, size, size, size, isGameOver(),0));
-        ship.set(0,new Ship("Carrier", 5, 0, 0, false,5));
-        ship.set(1,new Ship("Battleship", 4, 0, 0, false,4));
-        ship.set(2,new Ship("Cruise", 3, 0, 0, false,3));
-        ship.set(3,new Ship("Submarine", 3, 0, 0, false,3));
-        ship.set(4,new Ship("Destroyer", 2, 0, 0, false,2));
+        ship.add(new Ship(null, size, size, size, isGameOver()));
+        ship.add(new Ship(null, size, size, size, isGameOver()));
+        ship.add(new Ship(null, size, size, size, isGameOver()));
+        ship.add(new Ship(null, size, size, size, isGameOver()));
+        ship.add(new Ship(null, size, size, size, isGameOver()));
+        ship.set(0,new Ship("Carrier", 5, 0, 0, false));
+        ship.set(1,new Ship("Battleship", 4, 0, 0, false));
+        ship.set(2,new Ship("Cruise", 3, 0, 0, false));
+        ship.set(3,new Ship("Submarine", 3, 0, 0, false));
+        ship.set(4,new Ship("Destroyer", 2, 0, 0, false));
         
         
     }
@@ -99,7 +114,7 @@ public class BattleshipModel {
                     int row = random.nextInt(size-1);
                     int col = random.nextInt(size-1);
                     boolean isHorizontal = random.nextBoolean();
-                    Ship newShip = new Ship(shipTypes[i], shipSize[i], row, col, isHorizontal,shipSize[i]);
+                    Ship newShip = new Ship(shipTypes[i], shipSize[i], row, col, isHorizontal);
 
                     if(isValidPlacement(newShip, userBoard)) {
                         playerShips.add(newShip);
@@ -119,7 +134,7 @@ public class BattleshipModel {
                     int row = random.nextInt(size-1);
                     int col = random.nextInt(size-1);
                     boolean isHorizontal = random.nextBoolean();
-                    Ship newShip = new Ship(shipTypes[i], shipSize[i], row, col, isHorizontal,shipSize[i]);
+                    Ship newShip = new Ship(shipTypes[i], shipSize[i], row, col, isHorizontal);
 
                     if(isValidPlacement(newShip, opponentBoard)) {
                         opponentShips.add(newShip);
@@ -157,8 +172,10 @@ public class BattleshipModel {
         for(int i = 0; i < ship.getSize(); i++) {
             if(ship.isHorizontal()) {
                 board[row][col + i] = 'S';
+                this.opponentShipPositions[row][col + i] = ship;
             } else {
                 board[row + i][col] = 'S';
+                this.opponentShipPositions[row + i][col] = ship;
             }
         }
 
@@ -179,9 +196,7 @@ public class BattleshipModel {
     public void markUserBoard(int row, int col, boolean hit) {
        markBoard(userBoard, row, col, hit);
     }
-    public void markOpponentBoard(int row, int col, boolean hit) {
-        markBoard(opponentBoard, row, col, hit);
-    }
+   
     private void markBoard(char[][] board, int row, int col, boolean hit) {
         if(row >= 0 && row < size && col >= 0 && col < size) {
             board[row][col] = hit ? 'H' : 'M';
@@ -191,24 +206,4 @@ public class BattleshipModel {
     public char[][] getUserBoard() {
         return userBoard;
     }
-    public char[][] getOpponentBoard() {
-        return opponentBoard;
-    }
-
-    public boolean cellUsed(int row, int col)
-    {
-        if(opponentBoard[row][col] == 'S' || opponentBoard[row][col] == 'H')
-            return true;
-
-        return false;
-    }
-
-   public Ship getRecentlySunkShip() {
-    for (Ship ship : opponentShips) {
-        if (ship.checkAndMarkSunk()) {
-            return ship; // Return the recently sunk ship
-        }
-    }
-    return null; // No new ships have been sunk since the last check
-}
 }
