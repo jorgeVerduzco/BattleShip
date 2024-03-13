@@ -1,59 +1,42 @@
-//package GameTest;
+package Test;
 
-public class Ship {
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Ship  {
     private String name;
     private int size;
-    private int[] startCoordinates;
-    private int liveCells;
-    private boolean isHorizontal;
-    private boolean[] hitMarkers;
-    private boolean sunk = false;
+    private char symbol;
+    private int hits = 0; //number of hits
+    private char identifier; // represent ship on board
+    public List<int[]> positions = new ArrayList<>(); //tracks coordinates of the ship
 
-    public Ship(String name, int size,int row, int col, boolean isHorizontal, int cells) {
+    public Ship(String name, int size, char identifier) {
         this.name = name;
         this.size = size;
-        this.startCoordinates = new int[] {row, col};
-        this.isHorizontal = isHorizontal;
-        this.hitMarkers = new boolean[size];
-        this.liveCells = cells;
+        this.symbol = name.toUpperCase().charAt(0);
+        this.hits = 0;
+        this.identifier = identifier;
     }
 
-    public boolean markHit(int row, int col) {
-        //calculate hit index based on ship orientation and starting position
-       int hitIndex = isHorizontal ? col  - startCoordinates[1] : row - startCoordinates[0];
-       if(hitIndex >= 0 && hitIndex < size) {
-        if(!hitMarkers[hitIndex]) {
-            hitMarkers[hitIndex] = true;
-            liveCells= liveCells-1;
-            return true; //hit successful
-        }
-       }
-       return false; //hit not successful
-    }
-    public void markAsSunk() { // Add this method
-        this.sunk = true;
-    }
     public boolean isSunk() {
-       return sunk; //all parts hit
+        return hits == size;
     }
-      public boolean checkAndMarkSunk() {
-      //  for (boolean hit : hitMarkers) {
-            if (liveCells == 0) {
-                markAsSunk();
-                return true; // The ship is fully sunk
-                
-          //  }
-        }
-         // All parts of the ship have been hit, mark it as sunk
-        return false; // The ship is fully sunk
+
+    public void hit() {
+        hits++;
     }
-   
+
+    public void addPosition(int row, int col) {
+        positions.add(new int[] {row, col});
+    }
+
+    public List<int[]> getPositions() {
+        return positions;
+    }
 
     public String getName() {
-        return name;
-    }
-
-    public String getType() {
         return name;
     }
 
@@ -61,13 +44,11 @@ public class Ship {
         return size;
     }
 
-    public int[] getStartCoordinates() {
-        return startCoordinates;
+    public char getIdentifier() {
+        return identifier;
     }
 
-    public boolean isHorizontal() {
-        return isHorizontal;
+    public char getSymbol() {
+        return symbol;
     }
-
-    
 }
