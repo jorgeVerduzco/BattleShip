@@ -24,15 +24,28 @@ public class BattleshipModel {
         initializeBoard(userBoard);
         initializeBoard(opponentBoard);
         initializeShips(opponentShips);
-        randomizeShips();
+        //initializeShips(playerShips);
+        //randomizeShips();
         randomizeOpponentsShips();
-
+        displayBoard(opponentBoard);
+        System.out.println("");
+        displayBoard(userBoard);
     }
+
     private void initializeBoard(char[][] board) {
         for(int i = 0; i < size; i++) {
             for(int j = 0; j < size; j++) {
-                board[i][j] = ' ';
+                board[i][j] = '.';
             }
+        }
+    }
+
+    public void displayBoard(char[][] board) {
+        for(int i = 0; i < size; i++) {
+            for(int j = 0; j < size; j++) {
+                System.out.print(board[i][j] + " ");
+            }
+            System.out.println("");
         }
     }
 
@@ -44,18 +57,19 @@ public class BattleshipModel {
         }
         return true;
     }
-    public boolean placeShipManually(String shipType, int row, int col, boolean isHorizontal, int cells){
-        int shipSize = getShipSize(shipType);
-        if(shipSize == -1) return false;
-        Ship newShip = new Ship(shipType, shipSize, row, col, isHorizontal, cells);
-        if(!isValidPlacement(newShip, userBoard)) {
-            return false;
-        }
+
+    // public boolean placeShipManually(String shipType, int row, int col, boolean isHorizontal, int cells){
+    //     int shipSize = getShipSize(shipType);
+    //     if(shipSize == -1) return false;
+    //     Ship newShip = new Ship(shipType, shipSize, row, col, isHorizontal, cells, '\0');
+    //     if(!isValidPlacement(newShip, userBoard)) {
+    //         return false;
+    //     }
         
-        playerShips.add(newShip);
-        markShipOnBoard(newShip, userBoard);
-        return true;
-    }
+    //     playerShips.add(newShip);
+    //     markShipOnBoard(newShip, userBoard);
+    //     return true;
+    // }
 
     private int getShipSize(String shipType) {
         switch (shipType) {
@@ -65,103 +79,119 @@ public class BattleshipModel {
             case "Submarine": return 3;
             case "Destroyer": return 2;
             default: return -1; 
-                  }
+        }
     }
 
     private void initializeShips(List<Ship> ship)
     {
-        ship.add(new Ship(null, size, size, size, isGameOver(),0));
-        ship.add(new Ship(null, size, size, size, isGameOver(),0));
-        ship.add(new Ship(null, size, size, size, isGameOver(),0));
-        ship.add(new Ship(null, size, size, size, isGameOver(),0));
-        ship.add(new Ship(null, size, size, size, isGameOver(),0));
-        ship.set(0,new Ship("Carrier", 5, 0, 0, false,5));
-        ship.set(1,new Ship("Battleship", 4, 0, 0, false,4));
-        ship.set(2,new Ship("Cruise", 3, 0, 0, false,3));
-        ship.set(3,new Ship("Submarine", 3, 0, 0, false,3));
-        ship.set(4,new Ship("Destroyer", 2, 0, 0, false,2));
-        
-        
+        ship.add(new Ship("Carrier", 5, 0, 0, false, 5, '\0'));
+        ship.add(new Ship("Battleship", 4, 0, 0, false, 4, '\0'));
+        ship.add(new Ship("Cruise", 3, 0, 0, false, 3, '\0'));
+        ship.add(new Ship("Submarine", 3, 0, 0, false, 3, '\0'));
+        ship.add(new Ship("Destroyer", 2, 0, 0, false, 2, '\0'));
     }
+
     private void randomizeShips() {
-        String shipImageStrs[] = new String[5];
-        for (int i = 0; i < shipImageStrs.length; i++) {
-            if (i % 2 == 0) {
-                shipImageStrs[i] = "blueSquare_" + i + ".png";
+        char[] shipSymbols = {'C', 'B', 'R', 'S', 'D'};
+        int [] shipSize = {5,4,3,3,2};
+        String[] shipTypes = {"Carrier", "Battleship", "Cruise", "Submarine" , "Destroyer"};
+        
+
+        // for ship in ships
+        // generate random row and col
+        // UPDATE THE SHIPS ROW AND COL
+        // generate horizontal or vertical
+        // check if there's collision
+        // place board on ship if there isn't, if there is then run again
+        for (int i = 0; i < 5; i++ ) {
+            boolean placed = false;
+            while(!placed) {
+                int row = random.nextInt(size-1);
+                int col = random.nextInt(size-1);
+                boolean isHorizontal = random.nextBoolean();
+                playerShips.set(i, new Ship(shipTypes[i], shipSize[i], row, col, isHorizontal, shipSize[i], shipSymbols[i]));
             }
         }
+    }
+
+    private void randomizeOpponentsShips() {
+        char[] shipSymbols = {'C', 'B', 'R', 'S', 'D'};
         int [] shipSize = {5,4,3,3,2};
         String[] shipTypes = {"Carrier", "Battleship", "Cruise", "Submarine" , "Destroyer"};
+        
 
-        for(int i = 0; i < shipSize.length; i++) {
+        // for ship in ships
+        // generate random row and col
+        // UPDATE THE SHIPS ROW AND COL
+        // generate horizontal or vertical
+        // check if there's collision
+        // place board on ship if there isn't, if there is then run again
+        for (int i = 0; i < 5; i++ ) {
             boolean placed = false;
-                while(!placed) {
-                    int row = random.nextInt(size-1);
-                    int col = random.nextInt(size-1);
-                    boolean isHorizontal = random.nextBoolean();
-                    Ship newShip = new Ship(shipTypes[i], shipSize[i], row, col, isHorizontal,shipSize[i]);
+            while(!placed) {
+                int row = random.nextInt(size-1);
+                int col = random.nextInt(size-1);
+                boolean isHorizontal = random.nextBoolean();
+                Ship newShip = new Ship(shipTypes[i], shipSize[i], row, col, isHorizontal, shipSize[i], shipSymbols[i]);
 
-                    if(isValidPlacement(newShip, userBoard)) {
-                        playerShips.add(newShip);
-                        markShipOnBoard(newShip, userBoard);
-                        placed = true;
+                if (!isCollision(newShip, opponentBoard)) {
+                    opponentShips.set(i, newShip);
+                    markShipOnBoard(newShip, opponentBoard);
+                    placed = true;
                 }
-           }
+
+            }
         }
+
     }
-     private void randomizeOpponentsShips() {
-        int [] shipSize = {5,4,3,3,2};
-        String[] shipTypes = {"Carrier", "Battleship", "Cruise", "Submarine" , "Destroyer"};
 
-        for(int i = 0; i < shipSize.length; i++) {
-            boolean placed = false;
-                while(!placed) {
-                    int row = random.nextInt(size-1);
-                    int col = random.nextInt(size-1);
-                    boolean isHorizontal = random.nextBoolean();
-                    Ship newShip = new Ship(shipTypes[i], shipSize[i], row, col, isHorizontal,shipSize[i]);
+    private boolean isCollision(Ship ship, char[][] board) {        
+            System.out.println("in collision");
+            int row = ship.getStartCoordinates()[0];
+            int col = ship.getStartCoordinates()[1];
 
-                    if(isValidPlacement(newShip, opponentBoard)) {
-                        opponentShips.add(newShip);
-                        markShipOnBoard(newShip, opponentBoard);
-                        placed = true;
+            if (ship.isHorizontal()) {
+                System.out.printf("\nCol + ShipSize: %d\n", col + ship.getSize());
+                if (col + ship.getSize() > size) return true; // Out of bounds
+                for (int i = 0; i < ship.getSize(); i++) {
+                    if (board[row][col + i] == 'C' || board[row][col + i] == 'B' || board[row][col + i] == 'R' || board[row][col + i] == 'S' || board[row][col + i] == 'D') return true; // Collision detected
                 }
-           }
-        }
+            } else {
+                System.out.printf("\nRow + ShipSize: %d\n", row + ship.getSize());
+                if (row + ship.getSize() > size) return true; // Out of bounds
+                for (int i = 0; i < ship.getSize(); i++) {
+                    if (board[row + i][col] == 'C' || board[row + i][col] == 'B' || board[row + i][col] == 'R' || board[row + i][col] == 'S' || board[row + i][col] == 'D') return true; // Collision detected
+                }
+            }
+        return false; // No collision or out of bounds
     }
-
-    private boolean isCollision(Ship newShip, char[][] board) {
-         int row = newShip.getStartCoordinates()[0];
-    int col = newShip.getStartCoordinates()[1];
-    if (newShip.isHorizontal()) {
-        if (col + newShip.getSize() > size) return true; // Out of bounds
-        for (int i = 0; i < newShip.getSize(); i++) {
-            if (board[row][col + i] == 'S') return true; // Collision detected
-        }
-    } else {
-        if (row + newShip.getSize() > size) return true; // Out of bounds
-        for (int i = 0; i < newShip.getSize(); i++) {
-            if (board[row + i][col] == 'S') return true; // Collision detected
-        }
-    }
-    return false; // No collision or out of bounds
-}
     
-    private boolean isValidPlacement(Ship newShip, char[][]board) {
-        return !isCollision(newShip, board);
+    private boolean isValidPlacement(Ship ship, char[][]board) {
+        System.out.println("in placement");
+        return !isCollision(ship, board);
     }
 
     private void markShipOnBoard(Ship ship, char[][] board) {
         int row = ship.getStartCoordinates()[0];
         int col = ship.getStartCoordinates()[1];
         for(int i = 0; i < ship.getSize(); i++) {
+            System.out.printf("%d", i);
+
             if(ship.isHorizontal()) {
-                board[row][col + i] = 'S';
+                System.out.printf("HRow: %d\nHCol: %d\n", row, col+i);
+                if (col >= 9) {
+                    col = 8;
+                }
+                board[row][col + i] = ship.getShipSymbol();
             } else {
-                board[row + i][col] = 'S';
+                System.out.printf("vRow: %d\n, vRow+i: %d\nvCol: %d\n", row, row + i, col);
+                if (row >= 9) {
+                    row = 8;
+                }
+                System.out.printf("2nd vRow: %d\n", row+i);
+                board[row + i][col] = ship.getShipSymbol();
             }
         }
-
     }
 
     public boolean isGameOver() {
@@ -176,18 +206,21 @@ public class BattleshipModel {
         }
         return true;
     }
+
     public void markUserBoard(int row, int col, boolean hit) {
        markBoard(userBoard, row, col, hit);
     }
+
     public void markOpponentBoard(int row, int col, boolean hit) {
         markBoard(opponentBoard, row, col, hit);
     }
+
     private void markBoard(char[][] board, int row, int col, boolean hit) {
         if(row >= 0 && row < size && col >= 0 && col < size) {
             board[row][col] = hit ? 'H' : 'M';
-        }
-        
+        }   
     }
+
     public char[][] getUserBoard() {
         return userBoard;
     }
@@ -210,5 +243,5 @@ public class BattleshipModel {
         }
     }
     return null; // No new ships have been sunk since the last check
-}
+ }
 }

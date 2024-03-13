@@ -8,14 +8,16 @@ public class Ship {
     private boolean isHorizontal;
     private boolean[] hitMarkers;
     private boolean sunk = false;
+    private char symbol;
 
-    public Ship(String name, int size,int row, int col, boolean isHorizontal, int cells) {
+    public Ship(String name, int size,int row, int col, boolean isHorizontal, int cells, char symbol) {
         this.name = name;
         this.size = size;
         this.startCoordinates = new int[] {row, col};
         this.isHorizontal = isHorizontal;
         this.hitMarkers = new boolean[size];
         this.liveCells = cells;
+        this.symbol = symbol;
     }
 
     public boolean markHit(int row, int col) {
@@ -69,5 +71,8 @@ public class Ship {
         return isHorizontal;
     }
 
-    
+    public char getShipSymbol() {
+        return this.symbol;
+    }
+
 }

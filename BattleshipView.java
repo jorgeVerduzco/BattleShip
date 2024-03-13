@@ -73,7 +73,8 @@ public class BattleshipView extends JFrame{
         frame.setVisible(true);
         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
-     public void displayMessage(String message) {
+
+    public void displayMessage(String message) {
         JOptionPane.showMessageDialog(this, message);
     }
     
