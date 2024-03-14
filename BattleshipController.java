@@ -14,8 +14,8 @@ import java.io.File;
 import java.io.IOException;
 
 public class BattleshipController implements ActionListener{
-	private BattleshipModel model;
-	private BattleshipView view;
+	public BattleshipModel model;
+	public BattleshipView view;
 
 	public BattleshipController(BattleshipModel model, BattleshipView view) {
 		this.model = model;
@@ -53,12 +53,12 @@ public class BattleshipController implements ActionListener{
 		super.paintComponent(g);
 		image.paintIcon(this, g, (int) imageUpperLeft.getX(), (int) imageUpperLeft.getY());
 	}
-	private class ClickListener extends MouseAdapter{
+	public class ClickListener extends MouseAdapter{
 		public void mousePressed(MouseEvent event) {
 			prevPoint = event.getPoint();
 		}	
 	}
-    private class DragListener extends MouseMotionAdapter{
+    public class DragListener extends MouseMotionAdapter{
     	public void mouseDragged(MouseEvent event) {
     		Point currPoint = event.getPoint();
     		int dx = (int) (currPoint.getX() - prevPoint.getX());
@@ -122,7 +122,7 @@ public void actionPerformed(ActionEvent e) {
         }
     }
 
- private void updateViewFromModel() {
+ public void updateViewFromModel() {
 	char[][] userBoard = model.getUserBoard();
 	for(int row = 0; row < userBoard.length; row++) {
 		for(int col = 0; col < userBoard[row].length; col++) {
@@ -139,7 +139,7 @@ public void actionPerformed(ActionEvent e) {
 	}
  }
 
- private void updateOpponentViewFromModel() {
+ public void updateOpponentViewFromModel() {
 	char[][] opponentBoard = model.getOpponentBoard();
 	for(int row = 0; row < opponentBoard.length; row++) {
 		for(int col = 0; col < opponentBoard.length; col++) {

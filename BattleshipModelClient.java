@@ -4,12 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
-
-import org.w3c.dom.UserDataHandler;
-
 import java.io.Serializable;
 
-public class BattleshipModel {
+public class BattleshipModelClient {
     public final int size = 10;
     public char[][] userBoard;
     public char[][] opponentBoard;
@@ -21,9 +18,9 @@ public class BattleshipModel {
     public Random random = new Random();
     public Scanner scanner;
 
-    public Server server;
+    public Client client;
 
-    public BattleshipModel() {
+    public BattleshipModelClient() {
         userBoard = new char[size][size];
         opponentBoard = new char[size][size];
         numUserBoats = 5;
@@ -34,15 +31,17 @@ public class BattleshipModel {
         clearBoard(userBoard);
         clearBoard(opponentBoard);
         initializeShips();
-        server = new Server();
+        //client = new Client("127.0.0.1");
 
-        // client = new Client("127.0.0.1");
-        // try {
-        //     client.connectToServer();
-        // } catch (Exception e) {
-        //     System.out.println("ERROR: " + e.getMessage());
-        //     e.printStackTrace();
-        // }
+        client = new Client("127.0.0.1");
+        try {
+            client.connectToServer();
+            client.getStreams();
+            client.input.readObject();
+        } catch (Exception e) {
+            System.out.println("ERROR: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     public void clearBoard(char[][] board) {
@@ -159,9 +158,9 @@ public class BattleshipModel {
         String rowStr = Integer.toString(row);
         String colStr = Integer.toString(col);
         try {
-            server.sendData(rowStr);
-            server.sendData(colStr);
-            response = (String) server.input.readObject();
+            client.sendData(rowStr);
+            client.sendData(colStr);
+            response = (String) client.input.readObject();
         } catch (Exception e) {
             System.out.println("ERROR: " + e.getMessage());
             e.printStackTrace();
@@ -192,8 +191,8 @@ public class BattleshipModel {
         String colStr = "";
 
         try {
-            rowStr = (String) server.input.readObject();
-            colStr = (String) server.input.readObject();
+            rowStr = (String) client.input.readObject();
+            colStr = (String) client.input.readObject();
         } catch (Exception e) {
             System.out.println("ERROR: " + e.getMessage());
             e.printStackTrace();
@@ -206,10 +205,10 @@ public class BattleshipModel {
         char cell = userBoard[row][col];
         if (Character.isUpperCase(cell) && cell != 'X') {
             isHit = true;
-            server.sendData("hit");
+            client.sendData("hit");
         } else {
             isHit = false;
-            server.sendData("miss");
+            client.sendData("miss");
         }
 
         markUserBoard(row, col, isHit);
@@ -222,8 +221,6 @@ public class BattleshipModel {
             userBoard[row][col] = '*';
         }
     }
-
-
 
     public void printUserBoard() {
        printBoard(userBoard, true);

@@ -90,7 +90,7 @@ class MyPanel extends JPanel{
         }
     }
 
-    private class ClickListener extends MouseAdapter
+    public class ClickListener extends MouseAdapter
     {
         public void mousePressed(MouseEvent e)
         {

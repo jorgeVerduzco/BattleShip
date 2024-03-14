@@ -1,4 +1,4 @@
-package Battleships;
+//package Battleships;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.JFrame;
@@ -28,12 +28,12 @@ class MyPanel extends JPanel{
 		super.paintComponent(g);
 		image.paintIcon(this, g, (int) imageUpperLeft.getX(), (int) imageUpperLeft.getY());
 	}
-	private class ClickListener extends MouseAdapter{
+	public class ClickListener extends MouseAdapter{
 		public void mousePressed(MouseEvent event) {
 			prevPoint = event.getPoint();
 		}	
 	}
-    private class DragListener extends MouseMotionAdapter{
+    public class DragListener extends MouseMotionAdapter{
     	public void mouseDragged(MouseEvent event) {
     		Point currPoint = event.getPoint();
     		int dx = (int) (currPoint.getX() - prevPoint.getX());

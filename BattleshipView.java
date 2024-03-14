@@ -25,15 +25,15 @@ import java.util.Vector;
 
 
 public class BattleshipView extends JFrame{
-    private final int GRIDSIZE = 10;
+    public final int GRIDSIZE = 10;
     public JLabel userGrid[][];
     public JButton opponentGrid[][];
-    private JButton randomButton;   
-    private ImageIcon image = new ImageIcon("C:\\Users\\jorge\\Desktop\\COSC330\\GameTest\\canvas.png");
-    private JFrame frame = new JFrame();
-    private JPanel panel1 = new JPanel();
-    private JPanel panel2 = new JPanel();
-    private JPanel panel3 = new JPanel();
+    public JButton randomButton;   
+    public ImageIcon image = new ImageIcon("C:\\Users\\jorge\\Desktop\\COSC330\\GameTest\\canvas.png");
+    public JFrame frame = new JFrame();
+    public JPanel panel1 = new JPanel();
+    public JPanel panel2 = new JPanel();
+    public JPanel panel3 = new JPanel();
 
     public BattleshipView()
     {
@@ -97,14 +97,14 @@ public class BattleshipView extends JFrame{
 		super.paintComponent(g);
 		image.paintIcon(this, g, (int) imageUpperLeft.getX(), (int) imageUpperLeft.getY());
 	}
-	private class ClickListener extends MouseAdapter{
+	public class ClickListener extends MouseAdapter{
 		public void mousePressed(MouseEvent event) {
 			prevPoint = (event).getPoint();
 		}	
 	}
 
    
-    private class DragListener extends MouseMotionAdapter{
+    public class DragListener extends MouseMotionAdapter{
     	public void mouseDragged(MouseEvent event) {
     		Point currPoint = (event).getPoint();
     		int dx = (int) (currPoint.getX() - prevPoint.getX());
